@@ -3,45 +3,34 @@ package edu.gvsu.cis.cis357_carpenter_final_exam
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import edu.gvsu.cis.cis357_carpenter_final_exam.ui.theme.Cis357_carpenter_final_examTheme
+import androidx.activity.viewModels
+import androidx.compose.runtime.*
+import edu.gvsu.cis.cis357_carpenter_final_exam.data.model.DisneyCharacter
+import edu.gvsu.cis.cis357_carpenter_final_exam.ui.screens.DetailScreen
+import edu.gvsu.cis.cis357_carpenter_final_exam.ui.screens.MainScreen
+import edu.gvsu.cis.cis357_carpenter_final_exam.ui.viewmodel.DisneyViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: DisneyViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            Cis357_carpenter_final_examTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            var selectedCharacter by remember { mutableStateOf<DisneyCharacter?>(null) }
+
+            if (selectedCharacter == null) {
+                MainScreen(
+                    viewModel = viewModel,
+                    onCharacterClick = { selectedCharacter = it }
+                )
+            } else {
+                DetailScreen(
+                    character = selectedCharacter!!,
+                    viewModel = viewModel,
+                    onBack = { selectedCharacter = null }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Cis357_carpenter_final_examTheme {
-        Greeting("Android")
     }
 }
